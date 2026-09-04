@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Environment Masters — Interactive Website Sitemap</title>
+<style>
+  :root{
+    --home:#1F1F1F;
+    --l1:#966746;
+    --l2:#595959;
+    --l3:#A7A9AC;
+    --l3-text:#262626;
+    --line:#C7CBCF;
+    --page-bg:#FAFAF9;
+    --gold:#B08A3E;
+    --gold-bg:#B08A3E;
+    --green:#4C6B4F;
+    --green-bg:#4C6B4F;
+    --ink:#222733;
+    --muted:#6B7077;
+    --tip-bg:#1F1F1F;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--page-bg);font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);}
+
+  /* ---------- HEADER ---------- */
+  .page{max-width:1900px;margin:0 auto;padding:28px 32px 90px 32px;}
+  .h-title{font-size:26px;font-weight:700;color:#173A63;margin:0;}
+  .h-sub{font-size:14.5px;font-weight:600;color:var(--l1);margin:4px 0 2px 0;}
+  .h-note{font-size:12px;color:var(--muted);margin:0 0 18px 0;}
+  .toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:14px 18px;background:#fff;border:1px solid #E4E5E7;border-radius:6px;margin-bottom:22px;}
+  .toolbar-instructions{font-size:12px;color:var(--muted);}
+  .toolbar-instructions b{color:var(--ink);}
+  .toolbar-btns button{font-family:inherit;font-size:12px;font-weight:600;color:#fff;background:#173A63;border:none;border-radius:4px;padding:7px 14px;margin-left:8px;cursor:pointer;}
+  .toolbar-btns button:hover{background:#1F4774;}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;align-items:center;}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink);}
+  .lg-sw{display:inline-block;width:14px;height:14px;border-radius:3px;flex-shrink:0;}
+  .lg-line{display:inline-block;width:18px;height:0;border-top:1.5px solid var(--line);}
+  .lg-badge{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;color:#fff;font-size:9px;font-weight:800;}
+  .lg-off{display:inline-block;width:14px;height:14px;border:1.3px dashed var(--muted);border-radius:3px;background:#fff;}
+
+  /* ---------- TREE ROOT ---------- */
+  .tree-root{position:relative;}
+  .home-wrap{display:flex;justify-content:center;position:relative;padding-bottom:22px;}
+  .home-box{background:var(--home);color:#fff;font-weight:700;font-size:14px;padding:9px 26px;border-radius:5px;letter-spacing:0.3px;}
+  .home-wrap::after{content:'';position:absolute;left:50%;bottom:0;width:0;height:22px;border-left:1.5px solid var(--line);transform:translateX(-50%);}
+
+  .tree-scroll{overflow-x:auto;overflow-y:hidden;padding-bottom:14px;}
+  .l1-row{display:flex;flex-wrap:nowrap;gap:22px;border-top:1.5px solid var(--line);padding-top:22px;width:max-content;min-width:100%;}
+  .l1-row > .col{flex:0 0 250px;width:250px;position:relative;}
+  .l1-row > .col::before{content:'';position:absolute;left:50%;top:-22px;width:0;height:22px;border-left:1.5px solid var(--line);transform:translateX(-50%);}
+
+  /* ---------- GENERIC NODE / BOX ---------- */
+  .node{position:relative;}
+  .box-row{position:relative;display:flex;align-items:center;gap:6px;padding:3px 0;}
+  summary.box-row{cursor:pointer;list-style:none;}
+  summary.box-row::-webkit-details-marker{display:none;}
+
+  .children-wrap{margin-left:16px;padding-left:16px;border-left:1.5px solid var(--line);display:flex;flex-direction:column;gap:6px;padding-top:8px;padding-bottom:2px;}
+  .children-wrap > .node > .box-row::before{content:'';position:absolute;left:-16px;top:50%;width:16px;height:0;border-top:1.5px solid var(--line);}
+  .children-wrap > .node > .box-row::after{content:'';position:absolute;left:-19px;top:50%;width:6px;height:6px;border-radius:50%;background:var(--line);transform:translateY(-50%);}
+
+  .chevron{flex-shrink:0;width:11px;font-size:10px;color:var(--muted);display:inline-block;transition:transform .12s ease;transform:rotate(90deg);}
+  details:not([open]) > summary .chevron{transform:rotate(0deg);}
+  .leaf-spacer{display:inline-block;width:11px;flex-shrink:0;}
+
+  .box{position:relative;display:inline-block;vertical-align:middle;max-width:100%;padding:5px 12px;border-radius:4px;font-weight:600;line-height:1.15;white-space:nowrap;}
+  .box .label{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;}
+  .box.lvl1{background:var(--l1);color:#fff;font-size:12.5px;max-width:246px;}
+  .box.lvl2{background:var(--l2);color:#fff;font-size:11.8px;max-width:228px;}
+  .box.lvl3{background:var(--l3);color:var(--l3-text);font-size:11.3px;max-width:222px;}
+
+  .badge{position:absolute;top:-6px;right:-6px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:800;border:1.5px solid #fff;flex-shrink:0;}
+  .b-opt{background:var(--gold-bg);}
+  .b-new{background:var(--green-bg);}
+  .box.flag-opt{box-shadow:0 0 0 2px var(--gold-bg);}
+  .box.flag-new{box-shadow:0 0 0 2px var(--green-bg);}
+
+  .box.strategic .label{font-weight:800;}
+
+  .offsite{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.3px dashed var(--muted);border-radius:4px;padding:5px 11px;font-size:10.8px;font-weight:600;color:#4b4f55;max-width:210px;}
+
+  /* ---------- TOOLTIP ---------- */
+  .tip{visibility:hidden;opacity:0;position:absolute;left:0;top:100%;margin-top:6px;z-index:40;background:var(--tip-bg);color:#fff;border-radius:5px;padding:8px 10px;font-size:11px;line-height:1.5;width:max-content;max-width:260px;font-weight:400;transition:opacity .1s ease;pointer-events:none;}
+  .box-row:hover .tip{visibility:visible;opacity:1;}
+  .tip-crumb{display:block;color:#B9C2CD;font-size:10px;margin-bottom:3px;}
+  .tip-extra:empty{display:none;}
+
+  .footer-note{margin-top:34px;font-size:11px;color:var(--muted);border-left:2px solid #173A63;padding-left:12px;max-width:640px;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1 class="h-title">Environment Masters — Website Sitemap</h1>
+  <div class="h-sub">Interactive site architecture, current pages + first 90-day expansion</div>
+  <div class="h-note">Colors indicate navigation depth (matches Valve+Meter's Slickplan convention). Badges indicate 90-day status.</div>
+
+  <div class="toolbar">
+    <div class="legend">
+      <span class="legend-item"><span class="lg-sw" style="background:var(--home);"></span>Home</span>
+      <span class="legend-item"><span class="lg-sw" style="background:var(--l1);"></span>Level 1 page</span>
+      <span class="legend-item"><span class="lg-sw" style="background:var(--l2);"></span>Level 2 page</span>
+      <span class="legend-item"><span class="lg-sw" style="background:var(--l3);"></span>Level 3 page</span>
+      <span class="legend-item"><span class="lg-badge" style="background:var(--gold-bg);">O</span>Optimized, 90 days</span>
+      <span class="legend-item"><span class="lg-badge" style="background:var(--green-bg);">N</span>New page, 90 days</span>
+      <span class="legend-item"><span class="lg-off"></span>Off-site asset</span>
+    </div>
+    <div class="toolbar-btns">
+      <button id="expandAll" type="button">Expand all</button>
+      <button id="collapseAll" type="button">Collapse all</button>
+    </div>
+  </div>
+  <div class="toolbar-instructions" style="margin:-10px 0 20px 2px;">Click a branch to expand or collapse it. <b>Hover any page</b> for its full name, path, and 90-day notes.</div>
+
+  <div class="tree-root">
+    <div class="home-wrap"><div class="home-box">HOME</div></div>
+
+    <div class="tree-scroll"><div class="l1-row">
+
+      <!-- ================= ABOUT ================= -->
+      <div class="col">
+        <details class="node" open data-name="About">
+          <summary class="box-row">
+            <span class="chevron">▸</span>
+            <span class="box lvl1"><span class="label">About</span></span>
+            <span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span>
+          </summary>
+          <div class="children-wrap">
+            <div class="node leaf" data-name="Awards &amp; Affiliations"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Awards &amp; Affiliations</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Careers"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Careers</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Customer Satisfaction"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Customer Satisfaction</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Greener Tomorrow"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Greener Tomorrow</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Our Guarantee"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Our Guarantee</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Priority One Club Membership"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Priority One Club Membership</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Service Areas"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Service Areas</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Specials"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Specials</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Staff"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Staff</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Technical Training"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Technical Training</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Video Gallery"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Video Gallery</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+          </div>
+        </details>
+      </div>
+
+      <!-- ================= AC & HEATING ================= -->
+      <div class="col">
+        <details class="node" open data-name="AC &amp; Heating Services">
+          <summary class="box-row">
+            <span class="chevron">▸</span>
+            <span class="box lvl1"><span class="label">AC &amp; Heating Services</span></span>
+            <span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span>
+          </summary>
+          <div class="children-wrap">
+
+            <details class="node" open data-name="Air Conditioning">
+              <summary class="box-row">
+                <span class="chevron">▸</span>
+                <span class="box lvl2"><span class="label">Air Conditioning</span></span>
+                <span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span>
+              </summary>
+              <div class="children-wrap">
+                <div class="node leaf" data-name="AC Installation"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">AC Installation</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="AC Maintenance"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">AC Maintenance</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="AC Repair"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3 flag-opt"><span class="label">AC Repair</span><span class="badge b-opt">O</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Existing page, optimized in the first 90 days.<br>/ac-heating-services/air-conditioning/ac-repair/</span></span></div></div>
+                <div class="node leaf" data-name="AC Upgrade"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">AC Upgrade</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+              </div>
+            </details>
+
+            <details class="node" open data-name="Heating">
+              <summary class="box-row">
+                <span class="chevron">▸</span>
+                <span class="box lvl2"><span class="label">Heating</span></span>
+                <span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span>
+              </summary>
+              <div class="children-wrap">
+                <div class="node leaf" data-name="Furnace Installation"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Furnace Installation</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Furnace Repair"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Furnace Repair</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Heater Upgrades"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Heater Upgrades</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Heating Installation"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Heating Installation</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Heating Repair"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Heating Repair</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Heating Maintenance"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Heating Maintenance</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+              </div>
+            </details>
+
+            <div class="node leaf" data-name="Dual Fuel Systems"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Dual Fuel Systems</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Ductless Mini-Split Systems"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Ductless Mini-Split Systems</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Duct Repair &amp; Replacement"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Duct Repair &amp; Replacement</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Heat Pumps"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Heat Pumps</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Geothermal Heating &amp; Cooling"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Geothermal Heating &amp; Cooling</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+
+            <details class="node" open data-name="Indoor Air Quality">
+              <summary class="box-row">
+                <span class="chevron">▸</span>
+                <span class="box lvl2"><span class="label">Indoor Air Quality</span></span>
+                <span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span>
+              </summary>
+              <div class="children-wrap">
+                <div class="node leaf" data-name="Air Filters &amp; Purifiers"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Air Filters &amp; Purifiers</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Duct Sealing &amp; Replacement"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Duct Sealing &amp; Replacement</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="HRV &amp; ERV"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">HRV &amp; ERV</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Humidifiers &amp; Dehumidifiers"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Humidifiers &amp; Dehumidifiers</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+              </div>
+            </details>
+
+            <div class="node leaf" data-name="Thermostats"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Thermostats</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+          </div>
+        </details>
+      </div>
+
+      <!-- ================= PLUMBING ================= -->
+      <div class="col">
+        <details class="node" open data-name="Plumbing">
+          <summary class="box-row">
+            <span class="chevron">▸</span>
+            <span class="box lvl1 flag-opt"><span class="label">Plumbing</span><span class="badge b-opt">O</span></span>
+            <span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Existing hub page, optimized in the first 90 days.<br>Primary target market: Jackson, MS.<br>/plumbing/</span></span>
+          </summary>
+          <div class="children-wrap">
+            <div class="node leaf" data-name="Plumbing Installation"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Plumbing Installation</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Plumbing Repair"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Plumbing Repair</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Plumbing Maintenance"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Plumbing Maintenance</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Plumbing Upgrades"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Plumbing Upgrades</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Bathroom &amp; Kitchen"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Bathroom &amp; Kitchen</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Drain &amp; Sewer Cleaning"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Drain &amp; Sewer Cleaning</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Emergency Plumber"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2 flag-opt"><span class="label">Emergency Plumber</span><span class="badge b-opt">O</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Existing page, optimized in the first 90 days.<br>Priority internal link strengthened from the Plumbing hub.<br>/plumbing/emergency-plumber/</span></span></div></div>
+            <div class="node leaf" data-name="Gas Piping"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Gas Piping</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Hydro Jetting"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Hydro Jetting</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Repiping"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Repiping</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Sewer Lines"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Sewer Lines</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Sump Pumps"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Sump Pumps</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Video Pipe Inspection"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Video Pipe Inspection</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Water Filtration Systems"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Water Filtration Systems</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+
+            <details class="node" open data-name="Water Heaters">
+              <summary class="box-row">
+                <span class="chevron">▸</span>
+                <span class="box lvl2 flag-opt"><span class="label">Water Heaters</span><span class="badge b-opt">O</span></span>
+                <span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Existing hub, optimized in the first 90 days.<br>Priority internal link strengthened from the Plumbing hub.<br>/plumbing/water-heaters/</span></span>
+              </summary>
+              <div class="children-wrap">
+                <div class="node leaf" data-name="Tank Water Heater Installation"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Tank Water Heater Installation</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Tank Water Heater Repair"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Tank Water Heater Repair</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Tankless Water Heater Installation"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Tankless Water Heater Installation</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Tankless Water Heater Repair"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Tankless Water Heater Repair</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+              </div>
+            </details>
+
+            <div class="node leaf" data-name="Main Water Line"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Main Water Line</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+
+            <details class="node" open data-name="Water Leak Detection">
+              <summary class="box-row">
+                <span class="chevron">▸</span>
+                <span class="box lvl2"><span class="label">Water Leak Detection</span></span>
+                <span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span>
+              </summary>
+              <div class="children-wrap">
+                <div class="node leaf" data-name="Slab Leak Detection &amp; Repair"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Slab Leak Detection &amp; Repair</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+              </div>
+            </details>
+
+            <div class="node leaf" data-name="Faucet Repair &amp; Replacement"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Faucet Repair &amp; Replacement</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+          </div>
+        </details>
+      </div>
+
+      <!-- ================= ELECTRICAL ================= -->
+      <div class="col">
+        <details class="node" open data-name="Electrical">
+          <summary class="box-row">
+            <span class="chevron">▸</span>
+            <span class="box lvl1 flag-opt"><span class="label">Electrical</span><span class="badge b-opt">O</span></span>
+            <span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Existing hub page, optimized in the first 90 days. Primary structural focus of this cycle.<br>/electrical/</span></span>
+          </summary>
+          <div class="children-wrap">
+
+            <details class="node" open data-name="Electrical Repair">
+              <summary class="box-row">
+                <span class="chevron">▸</span>
+                <span class="box lvl2"><span class="label">Electrical Repair</span></span>
+                <span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Existing page. Extended this cycle with a new Meridian, MS location page.</span></span>
+              </summary>
+              <div class="children-wrap">
+                <div class="node leaf" data-name="Electrical Repair — Meridian, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3 flag-new"><span class="label">Electrical Repair — Meridian, MS</span><span class="badge b-new">N</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra">New page, first 90 days.<br>Extends Electrical → Electrical Repair.<br>Priority internal link from the Meridian Electrical page.</span></span></div></div>
+              </div>
+            </details>
+
+            <div class="node leaf" data-name="Electrical Installation"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Electrical Installation</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+
+            <details class="node" open data-name="Generators">
+              <summary class="box-row">
+                <span class="chevron">▸</span>
+                <span class="box lvl2"><span class="label">Generators</span></span>
+                <span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Existing hub. Extended this cycle with new Madison, MS and Meridian, MS generator-installation pages.</span></span>
+              </summary>
+              <div class="children-wrap">
+
+                <details class="node" open data-name="Generator Installation">
+                  <summary class="box-row">
+                    <span class="chevron">▸</span>
+                    <span class="box lvl3"><span class="label">Generator Installation</span></span>
+                    <span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Existing page. Extended this cycle with location-specific variants for Madison, MS and Meridian, MS.</span></span>
+                  </summary>
+                  <div class="children-wrap">
+                    <div class="node leaf" data-name="Generator Installation — Madison, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3 flag-new"><span class="label">Generator Install. — Madison, MS</span><span class="badge b-new">N</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra">New page, first 90 days.<br>Extends Electrical → Generators → Generator Installation.<br>Priority internal link from the Madison service-area page.</span></span></div></div>
+                    <div class="node leaf" data-name="Generator Installation — Meridian, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3 flag-new"><span class="label">Generator Install. — Meridian, MS</span><span class="badge b-new">N</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra">New page, first 90 days.<br>Extends Electrical → Generators → Generator Installation.<br>Priority internal link from the Meridian Electrical page.</span></span></div></div>
+                  </div>
+                </details>
+
+                <div class="node leaf" data-name="Generator Maintenance"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Generator Maintenance</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+              </div>
+            </details>
+
+            <div class="node leaf" data-name="Electrical Inspections"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Electrical Inspections</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+          </div>
+        </details>
+      </div>
+
+      <!-- ================= COMMERCIAL ================= -->
+      <div class="col">
+        <details class="node" open data-name="Commercial">
+          <summary class="box-row">
+            <span class="chevron">▸</span>
+            <span class="box lvl1"><span class="label">Commercial</span></span>
+            <span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span>
+          </summary>
+          <div class="children-wrap">
+
+            <details class="node" open data-name="Commercial HVAC">
+              <summary class="box-row">
+                <span class="chevron">▸</span>
+                <span class="box lvl2"><span class="label">Commercial HVAC</span></span>
+                <span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span>
+              </summary>
+              <div class="children-wrap">
+                <div class="node leaf" data-name="Commercial Ductwork"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Commercial Ductwork</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Commercial Heating"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Commercial Heating</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Commercial HVAC Maintenance"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Commercial HVAC Maintenance</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+              </div>
+            </details>
+
+            <details class="node" open data-name="Commercial Plumbing">
+              <summary class="box-row">
+                <span class="chevron">▸</span>
+                <span class="box lvl2"><span class="label">Commercial Plumbing</span></span>
+                <span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span>
+              </summary>
+              <div class="children-wrap">
+                <div class="node leaf" data-name="Commercial Video Pipe Inspection"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Commercial Video Pipe Inspection</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+                <div class="node leaf" data-name="Commercial Water Heaters"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3"><span class="label">Commercial Water Heaters</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+              </div>
+            </details>
+
+            <div class="node leaf" data-name="Energy Management Systems"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Energy Management Systems</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+          </div>
+        </details>
+      </div>
+
+      <!-- ================= SERVICE AREAS ================= -->
+      <div class="col">
+        <details class="node" open data-name="Service Areas">
+          <summary class="box-row">
+            <span class="chevron">▸</span>
+            <span class="box lvl1"><span class="label">Service Areas</span></span>
+            <span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span>
+          </summary>
+          <div class="children-wrap">
+            <div class="node leaf" data-name="Bolton, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Bolton, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Brandon, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Brandon, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Braxton, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Braxton, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Byram, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Byram, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Canton, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Canton, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Clinton, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Clinton, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Collinsville, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Collinsville, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Crystal Springs, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Crystal Springs, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Edwards, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Edwards, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Flora, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Flora, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Florence, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Florence, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+
+            <details class="node" open data-name="Flowood, MS">
+              <summary class="box-row">
+                <span class="chevron">▸</span>
+                <span class="box lvl2"><span class="label">Flowood, MS</span></span>
+                <span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span>
+              </summary>
+              <div class="children-wrap">
+                <div class="node leaf" data-name="Electrical"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3 flag-opt"><span class="label">Electrical</span><span class="badge b-opt">O</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Existing page (Flowood Electrical), optimized in the first 90 days.<br>Priority internal link strengthened from the Electrical hub.<br>/service-areas/flowood-ms/electrical/</span></span></div></div>
+              </div>
+            </details>
+
+            <div class="node leaf" data-name="Jackson, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2 strategic"><span class="label">Jackson, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Office and strategic-focus location.</span></span></div></div>
+            <div class="node leaf" data-name="Madison, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2 strategic"><span class="label">Madison, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Office and strategic-focus location.<br>Priority internal link strengthened to the new Madison generator-installation page.</span></span></div></div>
+            <div class="node leaf" data-name="Mendenhall, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Mendenhall, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+
+            <details class="node" open data-name="Meridian, MS">
+              <summary class="box-row">
+                <span class="chevron">▸</span>
+                <span class="box lvl2 strategic"><span class="label">Meridian, MS</span></span>
+                <span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Office and strategic-focus location.</span></span>
+              </summary>
+              <div class="children-wrap">
+                <div class="node leaf" data-name="Electrical"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl3 flag-opt"><span class="label">Electrical</span><span class="badge b-opt">O</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Existing page (Meridian Electrical Hub), optimized in the first 90 days.<br>Priority internal links strengthened to both new Meridian, MS pages.<br>/service-areas/meridian-ms/electrical/</span></span></div></div>
+                <div class="node leaf" data-name="Google Site — Meridian"><div class="box-row"><span class="leaf-spacer"></span><span class="offsite"><span class="label">Google Site (off-site)</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra">Off-site supporting asset for local visibility in Meridian, MS.<br>Not a page on environmentmasters.com.</span></span></div></div>
+              </div>
+            </details>
+
+            <div class="node leaf" data-name="Pearl, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Pearl, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Pelahatchie, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Pelahatchie, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Pisgah, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Pisgah, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Raymond, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Raymond, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Richland, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Richland, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Ridgeland, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Ridgeland, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Terry, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Terry, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Vicksburg, MS"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Vicksburg, MS</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+          </div>
+        </details>
+      </div>
+
+      <!-- ================= LEARNING CENTER / BLOG ================= -->
+      <div class="col">
+        <div class="node leaf" data-name="Learning Center / Blog">
+          <div class="box-row"><span class="leaf-spacer"></span><span class="box lvl1"><span class="label">Learning Center / Blog</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra">No structural changes in this phase.</span></span></div>
+        </div>
+      </div>
+
+      <!-- ================= CONTACT / FINANCING / REVIEWS ================= -->
+      <div class="col">
+        <details class="node" open data-name="Contact / Financing / Reviews">
+          <summary class="box-row">
+            <span class="chevron">▸</span>
+            <span class="box lvl1"><span class="label">Contact / Financing / Reviews</span></span>
+            <span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span>
+          </summary>
+          <div class="children-wrap">
+            <div class="node leaf" data-name="Contact"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Contact</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Financing"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Financing</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+            <div class="node leaf" data-name="Reviews"><div class="box-row"><span class="leaf-spacer"></span><span class="box lvl2"><span class="label">Reviews</span></span><span class="tip"><span class="tip-crumb"></span><span class="tip-extra"></span></span></div></div>
+          </div>
+        </details>
+      </div>
+
+    </div></div>
+  </div>
+
+  <div class="footer-note">New pages extend existing hub authority rather than launching as standalone landing pages. Existing HVAC, plumbing, and electrical pages already earning traffic are optimized in place, not replaced. Valve+Meter Performance Marketing — Environment Masters ThinkFirst 90-Day SEO Plan.</div>
+
+</div>
+
+<script>
+  (function(){
+    // Expand / collapse all
+    var expandBtn = document.getElementById('expandAll');
+    var collapseBtn = document.getElementById('collapseAll');
+    function allDetails(){ return document.querySelectorAll('details.node'); }
+    if(expandBtn){ expandBtn.addEventListener('click', function(){
+      var els = allDetails();
+      for(var i=0;i<els.length;i++){ els[i].open = true; }
+    }); }
+    if(collapseBtn){ collapseBtn.addEventListener('click', function(){
+      var els = allDetails();
+      for(var i=0;i<els.length;i++){ els[i].open = false; }
+    }); }
+
+    // Breadcrumb generation
+    function isNode(el){ return el && el.classList && el.classList.contains('node'); }
+    function nearestAncestorNode(el){
+      var p = el.parentElement;
+      while(p && !isNode(p)){ p = p.parentElement; }
+      return p;
+    }
+    function breadcrumbFor(node){
+      var names = [];
+      var current = node;
+      while(current){
+        var nm = current.getAttribute('data-name');
+        if(nm){ names.unshift(nm); }
+        current = nearestAncestorNode(current);
+      }
+      return 'Home' + (names.length ? '  \u2192  ' + names.join('  \u2192  ') : '');
+    }
+    var nodes = document.querySelectorAll('.node');
+    for(var i=0;i<nodes.length;i++){
+      var n = nodes[i];
+      var crumbEl = n.querySelector('.tip-crumb');
+      if(crumbEl){ crumbEl.textContent = breadcrumbFor(n); }
+    }
+  })();
+</script>
+</body>
+</html>
