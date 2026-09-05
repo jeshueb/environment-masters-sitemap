@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Environment Masters — Interactive Website Sitemap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --home:#1F1F1F;
@@ -25,7 +28,8 @@
 
   /* ---------- HEADER ---------- */
   .page{max-width:1900px;margin:0 auto;padding:28px 32px 90px 32px;}
-  .h-title{font-size:26px;font-weight:700;color:#173A63;margin:0;}
+  .brand-header{font-family:'Manrope','-apple-system',"Segoe UI",Helvetica,Arial,sans-serif;font-size:23px;font-weight:800;color:#966746;letter-spacing:0.2px;margin:0 0 14px 0;}
+  .h-title{font-size:22px;font-weight:700;color:#173A63;margin:0;}
   .h-sub{font-size:14.5px;font-weight:600;color:var(--l1);margin:4px 0 2px 0;}
   .h-note{font-size:12px;color:var(--muted);margin:0 0 18px 0;}
   .toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:14px 18px;background:#fff;border:1px solid #E4E5E7;border-radius:6px;margin-bottom:22px;}
@@ -55,11 +59,20 @@
   .node{position:relative;}
   .box-row{position:relative;display:flex;align-items:center;gap:6px;padding:3px 0;}
   summary.box-row{cursor:pointer;list-style:none;}
+  .l1-row > .col > .node{text-align:center;}
+  .l1-row > .col > .node > .box-row{display:inline-flex;}
+  .l1-row > .col > .node > .children-wrap{text-align:left;}
   summary.box-row::-webkit-details-marker{display:none;}
 
-  .children-wrap{margin-left:16px;padding-left:16px;border-left:1.5px solid var(--line);display:flex;flex-direction:column;gap:6px;padding-top:8px;padding-bottom:2px;}
+  .children-wrap{margin-left:16px;padding-left:16px;border-left:1.5px solid var(--line);display:flex;flex-direction:column;gap:6px;padding-top:8px;padding-bottom:2px;position:relative;}
   .children-wrap > .node > .box-row::before{content:'';position:absolute;left:-16px;top:50%;width:16px;height:0;border-top:1.5px solid var(--line);}
   .children-wrap > .node > .box-row::after{content:'';position:absolute;left:-19px;top:50%;width:6px;height:6px;border-radius:50%;background:var(--line);transform:translateY(-50%);}
+
+  /* Bridge line: connects the centered top-level box down to its (left-indented) children spine */
+  .l1-row > .col > details.node > .children-wrap::before{content:'';position:absolute;left:0;top:0;width:109px;height:0;border-top:1.5px solid var(--line);}
+
+  /* Extra breathing room between Electrical and Commercial so the deepest Electrical branch (4 levels) doesn't crowd Commercial */
+  .l1-row > .col.col-gap-after{margin-right:70px;}
 
   .chevron{flex-shrink:0;width:11px;font-size:10px;color:var(--muted);display:inline-block;transition:transform .12s ease;transform:rotate(90deg);}
   details:not([open]) > summary .chevron{transform:rotate(0deg);}
@@ -82,7 +95,7 @@
   .offsite{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.3px dashed var(--muted);border-radius:4px;padding:5px 11px;font-size:10.8px;font-weight:600;color:#4b4f55;max-width:210px;}
 
   /* ---------- TOOLTIP ---------- */
-  .tip{visibility:hidden;opacity:0;position:absolute;left:0;top:100%;margin-top:6px;z-index:40;background:var(--tip-bg);color:#fff;border-radius:5px;padding:8px 10px;font-size:11px;line-height:1.5;width:max-content;max-width:260px;font-weight:400;transition:opacity .1s ease;pointer-events:none;}
+  .tip{visibility:hidden;opacity:0;position:absolute;left:50%;transform:translateX(-50%);top:100%;margin-top:6px;z-index:40;background:var(--tip-bg);color:#fff;border-radius:5px;padding:8px 10px;font-size:11px;line-height:1.5;width:max-content;max-width:260px;font-weight:400;transition:opacity .1s ease;pointer-events:none;}
   .box-row:hover .tip{visibility:visible;opacity:1;}
   .tip-crumb{display:block;color:#B9C2CD;font-size:10px;margin-bottom:3px;}
   .tip-extra:empty{display:none;}
@@ -93,9 +106,10 @@
 <body>
 <div class="page">
 
+  <div class="brand-header">Valve + Meter Performance Marketing</div>
   <h1 class="h-title">Environment Masters — Website Sitemap</h1>
   <div class="h-sub">Interactive site architecture, current pages + first 90-day expansion</div>
-  <div class="h-note">Colors indicate navigation depth (matches Valve+Meter's Slickplan convention). Badges indicate 90-day status.</div>
+  <div class="h-note">Colors indicate navigation depth. Badges indicate 90-day status.</div>
 
   <div class="toolbar">
     <div class="legend">
@@ -265,7 +279,7 @@
       </div>
 
       <!-- ================= ELECTRICAL ================= -->
-      <div class="col">
+      <div class="col col-gap-after">
         <details class="node" open data-name="Electrical">
           <summary class="box-row">
             <span class="chevron">▸</span>
